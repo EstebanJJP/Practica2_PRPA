@@ -67,3 +67,5 @@ def main():
         p = Process(target=car, args=(cid, direction, monitor))
         p.start()
         time.sleep(random.expovariate(1/0.5)) # a new car enters each 0.5s
+        
+''' hola '''
