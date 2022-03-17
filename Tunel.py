@@ -16,6 +16,7 @@ class Monitor():
         self.mutex = Lock()
         self.manager = manager
         self.waiting = self.manager.list()
+        self.in_tunel = self.manager.list()
         self.pasa_n = Condition(self.mutex)
         self.pasa_s = Condition(self.mutex)
     
@@ -26,19 +27,30 @@ class Monitor():
     
     def more_waiting_s(self):
         return not self.more_waiting_n
+    
+    def no_s_in_tunel(self):
+        return self.in_tunel.count(SOUTH)==0
+    
+    def no_n_in_tunel(self):
+        return self.in_tunel.count(NORTH)==0
 
 
     def wants_enter(self, direction):
         self.mutex.acquire()
         self.waiting.append(direction)
         if direction == NORTH:
-            self.pasa_n.wait_for(self.more_waiting_n)
+            self.pasa_n.wait_for(self.more_waiting_n and self.no_s_in_tunel) #SI es tu turno de pasar y PUEDES pasar, pasa
         else:
-            self.pasa_s.wait_for(self.more_waiting_s)
+            self.pasa_s.wait_for(self.more_waiting_s and self.no_n_in_tunel)
+        self.waiting.remove(direction)
+        self.in_tunel.append(direction)
         self.mutex.release()
 
     def leaves_tunnel(self, direction):
         self.mutex.acquire()
+        self.in_tunel.remove(direction)
+        self.pasa_n.notify_all()
+        self.pasa_s.notify_all()        
         self.mutex.release()
 
 def delay(n=3):
@@ -67,5 +79,6 @@ def main():
         p = Process(target=car, args=(cid, direction, monitor))
         p.start()
         time.sleep(random.expovariate(1/0.5)) # a new car enters each 0.5s
-        
-''' hola '''
+
+if __name__ == '__main__':
+    main()
