@@ -1,5 +1,15 @@
 """
-Solution to the one-way tunnel
+Esteban Joaquín Jiménez Párraga
+Daniel Carretero Álvarez
+Carlos Adolfo Gallego Gallego
+
+Nuestra solución consiste en valorar si un coche en una dirección puede pasar (
+viendo que no haya ningún coche en la otra dirección en el túnel) 
+y decidir a qué coches da paso, para ello cuenta la cantidad de coches esperando en cada dirección 
+y da paso al que tenga más esperando. Con monitores y semáforos nos aseguramos de que se solucione 
+la exclusión mutua, además de que no haya problemas de inanición ni de bloqueos pues los coches siempre 
+salen y es una solución con relativa justicia pues los coches se ceden el paso según en cual haya 
+más esperando hasta la nueva comprobación de cuantos han pasado por el túnel y se han generado durante ese tiempo.
 """
 import time
 import random
